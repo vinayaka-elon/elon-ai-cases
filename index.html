@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Find the mistakes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--acc:#73000a;--ink:#1f1416;--text:#4a3c3e;--muted:#8a7b7c;--line:#e8dfdc;--bg:#ffffff;--bg2:#f8f4f2;--ok:#3f6f5a;--bad:#a3262f;--q:#a07d2c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 "Instrument Sans",system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:34px;font-weight:700;letter-spacing:-.02em;margin:0 0 8px}
+h2{font-size:24px;font-weight:700;letter-spacing:-.01em;margin:0 0 6px}
+p{margin:0 0 12px;color:var(--text)}
+.intro{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:8px}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.how div{background:var(--bg2);border-radius:10px;padding:10px 12px;font-size:15px;color:var(--text)}
+.how b{display:block;font-size:20px;color:var(--ink)}
+label.f{display:block;font-size:14px;font-weight:600;color:var(--muted);margin:14px 0 4px}
+input[type=text],textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff}
+textarea{min-height:70px;resize:vertical}
+input:focus,textarea:focus{outline:2px solid var(--acc);outline-offset:1px}
+section.case{padding:30px 0;border-bottom:1px solid var(--line)}
+.lead{font-size:16px}
+.claim{display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:start;padding:12px 0;border-top:1px solid var(--line)}
+.claim .n{font-weight:700;color:var(--muted)}
+.claim .t{color:var(--ink)}
+.marks{display:flex;gap:6px}
+.marks button{font:inherit;font-size:16px;font-weight:600;width:44px;height:36px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--text);cursor:pointer}
+.marks button[data-m="ok"].on{background:var(--ok);border-color:var(--ok);color:#fff}
+.marks button[data-m="bad"].on{background:var(--bad);border-color:var(--bad);color:#fff}
+.marks button[data-m="q"].on{background:var(--q);border-color:var(--q);color:#fff}
+.fix{grid-column:2/4;display:none}
+.claim.need .fix{display:block}
+.fix input{font-size:15px}
+.key{grid-column:2/4;display:none;font-size:15px;background:var(--bg2);border-radius:8px;padding:9px 12px;color:var(--text)}
+.show .key{display:block}
+.key b.ok{color:var(--ok)}.key b.bad{color:var(--bad)}.key b.q{color:var(--q)}
+.key .you{float:right;font-weight:600}
+.data{display:grid;grid-template-columns:240px 1fr;gap:24px;margin:10px 0 6px;align-items:start}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+th{font-size:13px;color:var(--muted);font-weight:600}
+td.r{text-align:right}
+ul.notes{margin:0;padding-left:18px;color:var(--text);font-size:15px}
+ul.notes li{margin:4px 0}
+.box{background:var(--bg2);border-radius:10px;padding:12px 14px}
+.box h3{margin:0 0 6px;font-size:14px;color:var(--muted);font-weight:600}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 0}
+.btns button{font:inherit;font-size:16px;font-weight:600;border-radius:8px;padding:10px 18px;cursor:pointer;border:1px solid var(--acc);background:#fff;color:var(--acc)}
+.btns button.pri{background:var(--acc);color:#fff}
+#summary{padding-top:30px}
+.sum-case{margin:18px 0 0;padding:16px 18px;border:1px solid var(--line);border-radius:12px}
+.sum-case h3{margin:0 0 8px;font-size:18px}
+.sum-row{display:grid;grid-template-columns:28px 70px 70px 1fr;gap:8px;font-size:15px;padding:4px 0;color:var(--text);border-top:1px solid var(--line)}
+.sum-row.h{font-size:13px;font-weight:600;color:var(--muted);border-top:0}
+.sum-row .m{font-weight:700}
+.score{font-weight:600;color:var(--acc)}
+.muted{color:var(--muted)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.qq{color:var(--q)}
+@media (max-width:640px){.how{grid-template-columns:1fr}.data{grid-template-columns:1fr}.claim{grid-template-columns:22px 1fr}.marks{grid-column:2}.fix,.key{grid-column:2}}
+</style>
+</head>
+<body>
+<main>
+<div class="intro">
+<h1>Find the mistakes</h1>
+<p>Each case shows something an AI wrote. Mark every claim ✓ correct, ✗ wrong, or ? can't verify. Fix every ✗ using only what is on the page, then decide whether you would actually use it.</p>
+<div class="how"><div><b>Groups of 3</b>One case per group, or all three if you finish early</div><div><b>7 minutes</b>Mark, fix, decide</div><div><b>Then share</b>One sentence per case to the room</div></div>
+<label class="f" for="grp">Group members</label>
+<input type="text" id="grp" placeholder="Names">
+</div>
+
+<section class="case" data-case="A">
+<h2>Case A: an AI study guide</h2>
+<p class="lead">A student asked an AI to “explain correlation, R², and p-values for my analytics exam.”</p>
+<div class="claims"></div>
+<label class="f">Validation: would you study from this guide? What would you change?</label>
+<textarea class="val"></textarea>
+</section>
+
+<section class="case" data-case="B">
+<h2>Case B: an AI sales summary</h2>
+<p class="lead">A campus coffee cart asked an AI to summarize eight weeks of sales. Check the summary against the data.</p>
+<div class="data"><table><thead><tr><th>Week</th><th class="r">Sales</th><th>Promo?</th></tr></thead><tbody>
+<tr><td>1</td><td class="r">$420</td><td>No</td></tr><tr><td>2</td><td class="r">$455</td><td>No</td></tr><tr><td>3</td><td class="r">$610</td><td>Yes</td></tr><tr><td>4</td><td class="r">$430</td><td>No</td></tr>
+<tr><td>5</td><td class="r">$590</td><td>Yes</td></tr><tr><td>6</td><td class="r">$445</td><td>No</td></tr><tr><td>7</td><td class="r">$640</td><td>Yes</td></tr><tr><td>8</td><td class="r">$410</td><td>No</td></tr></tbody></table>
+<div class="box"><h3>The AI's summary</h3><div class="claims"></div></div></div>
+<label class="f">Validation: would you hand this to the cart's manager as is?</label>
+<textarea class="val"></textarea>
+</section>
+
+<section class="case" data-case="C">
+<h2>Case C: AI resume bullets</h2>
+<p class="lead">Jordan asked an AI to turn these notes into resume bullets for an analyst internship.</p>
+<div class="data"><div class="box"><h3>Jordan's notes (the truth)</h3><ul class="notes"><li>Worked at the campus coffee cart for two semesters, about 10 hours a week</li><li>Ran the cart's Instagram; followers went from about 300 to 450</li><li>Made an Excel sheet to track weekly sales</li><li>Helped train two new workers</li></ul></div>
+<div class="box"><h3>The AI's bullets</h3><div class="claims"></div></div></div>
+<label class="f">Validation: which bullets could Jordan defend in an interview? Rewrite one honestly.</label>
+<textarea class="val"></textarea>
+</section>
+
+<div class="btns"><button class="pri" id="mk">Show my summary</button><button id="ck">Check against the answer key</button><button id="cp">Copy summary</button></div>
+
+<section id="summary" hidden>
+<h2>Summary</h2>
+<p class="muted" id="sum-head"></p>
+<div id="sum-body"></div>
+</section>
+</main>
+
+<script>
+const CASES={
+ A:{title:'Case A: an AI study guide',claims:[
+  ['A correlation of 0.85 between ad spend and sales proves that ad spend causes sales.','bad','Correlation shows the two move together. It does not show cause; a third factor such as season could drive both.'],
+  ['Correlation coefficients always fall between −1 and +1.','ok','−1 is a perfect negative relationship and +1 a perfect positive one.'],
+  ['An R² of 0.64 means the model\'s predictions are correct 64% of the time.','bad','R² of 0.64 means the model explains 64% of the variation in the outcome. It says nothing about how often a prediction is right.'],
+  ['A p-value of 0.03 means there is a 3% chance the null hypothesis is true.','bad','A p-value is the chance of seeing data this extreme if the null hypothesis were true. It says nothing direct about how likely the null is.'],
+  ['The median is less affected by outliers than the mean.','ok','One extreme value pulls the mean but barely moves the median.'],
+  ['Smith and Lee (2021, Journal of Applied Analytics) found that 80% of business decisions rely on regression.','q','Nothing on the page lets you check this, and it has the look of an invented citation. Look the source up before using it.']]},
+ B:{title:'Case B: an AI sales summary',claims:[
+  ['Total sales over the eight weeks were $4,000.','ok','420 + 455 + 610 + 430 + 590 + 445 + 640 + 410 = $4,000.'],
+  ['Average weekly sales were $550.','bad','$4,000 ÷ 8 = $500 a week.'],
+  ['Promo weeks averaged about $613, vs. $432 without a promo.','ok','(610 + 590 + 640) ÷ 3 ≈ $613 and 2,160 ÷ 5 = $432.'],
+  ['Promotions increased sales by 61%.','bad','613 ÷ 432 ≈ 1.42, so promo weeks were about 42% higher. And three promo weeks show a difference, not proof that the promo caused it.'],
+  ['Sales peaked in Week 5.','bad','The peak was Week 7 at $640.'],
+  ['Running a promo every week will lift sales to about $613 every week.','bad','Three promo weeks cannot support that forecast. Customers may tire of promos, and the cost of each promo is not in the data. A ? is also a fair mark.']]},
+ C:{title:'Case C: AI resume bullets',claims:[
+  ['Managed daily operations for a campus food business across two semesters','bad','Jordan worked about 10 hours a week. “Worked at the campus coffee cart for two semesters” is what the notes support.'],
+  ['Grew social media following 150% through data-driven campaigns','bad','300 to 450 is a 50% increase, and nothing in the notes says the campaigns were data-driven.'],
+  ['Built an Excel tracker to monitor weekly sales revenue','ok','Supported by the notes.'],
+  ['Led a team of five employees','bad','Jordan helped train two new workers.'],
+  ['Proficient in SQL, Python, and Tableau','bad','None of these appear in the notes.'],
+  ['Increased revenue 42% by designing a weekly promotion strategy','bad','Nothing in the notes says Jordan designed promotions or raised revenue.']]}
+};
+const LAB={ok:'✓',bad:'✗',q:'?'},WORD={ok:'correct',bad:'wrong',q:"can't verify"};
+const state={};
+document.querySelectorAll('section.case').forEach(sec=>{const k=sec.dataset.case;state[k]=CASES[k].claims.map(()=>({m:null,fix:''}));
+ sec.querySelector('.claims').innerHTML=CASES[k].claims.map((c,i)=>`<div class="claim" data-i="${i}"><span class="n">${i+1}</span><span class="t">${c[0]}</span><span class="marks"><button data-m="ok" aria-label="correct">✓</button><button data-m="bad" aria-label="wrong">✗</button><button data-m="q" aria-label="can't verify">?</button></span><div class="fix"><input type="text" placeholder="Your fix"></div><div class="key"></div></div>`).join('');
+ sec.querySelectorAll('.claim').forEach(row=>{const i=+row.dataset.i;
+  row.querySelectorAll('.marks button').forEach(b=>b.onclick=()=>{const m=b.dataset.m;state[k][i].m=state[k][i].m===m?null:m;row.querySelectorAll('.marks button').forEach(x=>x.classList.toggle('on',x.dataset.m===state[k][i].m));row.classList.toggle('need',state[k][i].m==='bad');refresh()});
+  row.querySelector('.fix input').oninput=e=>{state[k][i].fix=e.target.value;refresh()}});
+ sec.querySelector('.val').oninput=refresh});
+let checked=false;
+function vals(k){return document.querySelector(`section[data-case="${k}"] .val`).value.trim()}
+function build(){const g=document.getElementById('grp').value.trim();let total=0,right=0,marked=0;
+ const sp=m=>m?`<span class="${m==='ok'?'ok':m==='bad'?'bad':'qq'}">${LAB[m]}</span>`:'<span class="muted">–</span>';
+ const done=Object.keys(CASES).filter(k=>state[k].some(x=>x.m)||vals(k));
+ const html=done.map(k=>{const C=CASES[k];let r=0,mk=0;
+  const rows=C.claims.map((c,i)=>{const s=state[k][i];total++;if(s.m){mk++;marked++}if(s.m===c[1]){r++;right++}
+   return `<div class="sum-row"><span>${i+1}</span><span class="m">${sp(s.m)}</span><span class="m">${checked?sp(c[1]):''}</span><span>${s.fix?esc(s.fix):(s.m==='bad'?'<span class="muted">No fix written</span>':'')}</span></div>`}).join('');
+  const v=vals(k);
+  return `<div class="sum-case"><h3>${C.title}</h3><p class="muted" style="margin:0 0 6px">${mk} of ${C.claims.length} claims marked${checked?` · <span class="score">${r} of ${C.claims.length} match the key</span>`:''}</p><div class="sum-row h"><span>#</span><span>Yours</span><span>${checked?'Key':''}</span><span>Fix</span></div>${rows}<p style="margin:10px 0 0"><b>Validation:</b> ${v?esc(v):'<span class="muted">Not answered</span>'}</p></div>`}).join('');
+ document.getElementById('sum-head').innerHTML=done.length?`${g?esc(g)+' · ':''}${done.length} case${done.length>1?'s':''} worked · ${marked} of ${total} claims marked${checked?` · <span class="score">${right} of ${total} match the answer key</span>`:''}`:'Mark at least one claim to see your summary.';
+ document.getElementById('sum-body').innerHTML=html}
+function refresh(){if(!document.getElementById('summary').hidden)build()}
+function esc(t){return t.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+document.getElementById('grp').oninput=refresh;
+document.getElementById('mk').onclick=()=>{const s=document.getElementById('summary');s.hidden=false;build();s.scrollIntoView({behavior:'smooth'})};
+document.getElementById('ck').onclick=()=>{checked=true;document.querySelectorAll('section.case').forEach(sec=>{const k=sec.dataset.case;sec.classList.add('show');sec.querySelectorAll('.claim').forEach(row=>{const i=+row.dataset.i,c=CASES[k].claims[i],s=state[k][i];
+  row.querySelector('.key').innerHTML=`<span class="you">${s.m?(s.m===c[1]?'<span class="ok">You matched</span>':'<span class="bad">You marked '+LAB[s.m]+'</span>'):'<span class="muted">Not marked</span>'}</span><b class="${c[1]==='q'?'q':c[1]}">${LAB[c[1]]} ${WORD[c[1]]}.</b> ${c[2]}`})});
+ const s=document.getElementById('summary');s.hidden=false;build();document.querySelector('section.case').scrollIntoView({behavior:'smooth'})};
+document.getElementById('cp').onclick=()=>{if(document.getElementById('summary').hidden)build();const g=document.getElementById('grp').value.trim();
+ const txt=['Find the mistakes'+(g?' · '+g:'')].concat(Object.keys(CASES).filter(k=>state[k].some(x=>x.m)||vals(k)).map(k=>{const C=CASES[k];return '\n'+C.title+'\n'+C.claims.map((c,i)=>{const s=state[k][i];return `${i+1}. ${s.m?LAB[s.m]:'–'}${s.fix?'  Fix: '+s.fix:''}${checked?'  (key '+LAB[c[1]]+')':''}`}).join('\n')+'\nValidation: '+(vals(k)||'–')})).join('\n');
+ const done=()=>{const b=document.getElementById('cp');b.textContent='Copied';setTimeout(()=>b.textContent='Copy summary',1500)};
+ try{navigator.clipboard.writeText(txt).then(done,()=>fallback(txt,done))}catch(e){fallback(txt,done)}};
+function fallback(t,done){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');done()}catch(e){}a.remove()}
+</script>
+</body>
+</html>
